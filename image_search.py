@@ -59,10 +59,13 @@ def app():
     )
 
     images_to_show = []
-    for inscription_id in image_filenames:
-        image_tags = get_image_tags(inscription_id, tags_file_name=tags_file_name)
-        if set(selected_tags).issubset(set(image_tags)):
-            images_to_show.append(inscription_id)
+    if selected_tags:
+        for inscription_id in image_filenames:
+            image_tags = get_image_tags(inscription_id, tags_file_name=tags_file_name)
+            if set(selected_tags).issubset(set(image_tags)):
+                images_to_show.append(inscription_id)
+    # else:
+    #     images_to_show = []
 
     if not selected_tags:
         st.write("Please select one or more tags to display images.")
