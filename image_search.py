@@ -8,7 +8,7 @@ from io import BytesIO
 
 
 TAG_DIR: str = "tag_files"
-IMAGE_DIR: str = "data/bin"
+TAG_DIR: str = "tag_files_500"  # comment this out to run on full caption set
 
 
 @st.cache_data
@@ -64,8 +64,7 @@ def app():
             image_tags = get_image_tags(inscription_id, tags_file_name=tags_file_name)
             if set(selected_tags).issubset(set(image_tags)):
                 images_to_show.append(inscription_id)
-    # else:
-    #     images_to_show = []
+    # else:sow = []
 
     if not selected_tags:
         st.write("Please select one or more tags to display images.")
