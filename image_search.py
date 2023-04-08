@@ -59,10 +59,10 @@ def app():
     )
 
     images_to_show = []
-    for filename in image_filenames:
-        image_tags = get_image_tags(filename, tags_file_name=tags_file_name)
+    for inscription_id in image_filenames:
+        image_tags = get_image_tags(inscription_id, tags_file_name=tags_file_name)
         if set(selected_tags).issubset(set(image_tags)):
-            images_to_show.append(filename)
+            images_to_show.append(inscription_id)
 
     if not selected_tags:
         st.write("Please select one or more tags to display images.")
@@ -79,41 +79,36 @@ def app():
         end_index = start_index + 16
 
         cols = st.columns(4)
-        for i, filename in enumerate(images_to_show[start_index:end_index]):
+        for i, inscription_id in enumerate(images_to_show[start_index:end_index]):
             if i % 4 == 0:
                 cols = st.columns(4, gap="large")
-
-            image_path = os.path.join(IMAGE_DIR, filename)
 
             if caption_option == "Tags":
                 caption = " ".join(
                     get_image_tags(
-                        image_filename=filename,
+                        image_filename=inscription_id,
                         tags_file_name=tags_file_name,
                     )
                 )
             elif caption_option == "Captions":
                 caption = get_image_captions(
-                    image_filename=filename,
+                    image_filename=inscription_id,
                     tags_file_name=tags_file_name,
                 )
             elif caption_option == "InscriptionId":
-                caption = filename
+                caption = inscription_id
             else:
                 caption = None
 
             # get image
-            with open(image_path, "rb") as f:
-                image = Image.open(f)
-                cols[i % 4].image(
-                    image,
-                    caption=caption,
-                    width=190,
-                )
-            # image_metadata = image_dict[inscription_id]
-            # encoded_image_data = tags_dict[inscription_id]["encoded_bytes"]
-            # decoded_image_data = base64.b64decode(encoded_image_data)
-            # image = Image.open(BytesIO(decoded_image_data))
+            encoded_image_data = tags_dict[inscription_id]["encoded_bytes"]
+            decoded_image_data = base64.b64decode(encoded_image_data)
+            image = Image.open(BytesIO(decoded_image_data))
+            cols[i % 4].image(
+                image,
+                caption=caption,
+                width=190,
+            )
 
 
 # Run the app
