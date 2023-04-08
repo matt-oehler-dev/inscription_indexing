@@ -7,8 +7,12 @@ import base64
 from io import BytesIO
 
 
-TAG_DIR: str = "tag_files"
-TAG_DIR: str = "tag_files_500"  # comment this out to run on full caption set
+USE_SAMPLED_SET_OF_IMAGES = True
+
+if USE_SAMPLED_SET_OF_IMAGES:
+    TAG_DIR: str = "tag_files_500"
+else:
+    TAG_DIR: str = "tag_files"  #
 
 
 @st.cache_data
