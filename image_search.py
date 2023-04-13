@@ -7,28 +7,12 @@ import base64
 from io import BytesIO
 
 
-USE_SAMPLED_SET_OF_IMAGES = True
+USE_SAMPLED_SET_OF_IMAGES = False
 
 if USE_SAMPLED_SET_OF_IMAGES:
     TAG_DIR: str = "tag_files_500"
 else:
     TAG_DIR: str = "tag_files"
-
-
-@st.cache_data
-def get_image_tags(image_filename: str, tags_file_name: str) -> List[str]:
-    with open(os.path.join(TAG_DIR, tags_file_name)) as f:
-        tags_dict = json.load(f)
-
-        return tags_dict[image_filename].get("tags", [])
-
-
-@st.cache_data
-def get_image_captions(image_filename: str, tags_file_name: str) -> List[str]:
-    with open(os.path.join(TAG_DIR, tags_file_name)) as f:
-        tags_dict = json.load(f)
-
-        return tags_dict[image_filename].get("raw", "")
 
 
 @st.cache_data
@@ -72,7 +56,8 @@ def app():
                 percent_searched += 1
                 # print(i, percent_searched, i % percent_searched)
                 bar.progress(percent_searched)
-            image_tags = get_image_tags(inscription_id, tags_file_name=tags_file_name)
+            # image_tags = get_image_tags(inscription_id, tags_file_name=tags_file_name)
+            image_tags = tags_dict[inscription_id].get("tags", [])
             if set(selected_tags).issubset(set(image_tags)):
                 images_to_show.append(inscription_id)
         bar.progress(100)
@@ -98,17 +83,9 @@ def app():
                 cols = st.columns(4, gap="large")
 
             if caption_option == "Tags":
-                caption = " ".join(
-                    get_image_tags(
-                        image_filename=inscription_id,
-                        tags_file_name=tags_file_name,
-                    )
-                )
+                caption = " ".join(tags_dict[inscription_id].get("tags", []))
             elif caption_option == "Captions":
-                caption = get_image_captions(
-                    image_filename=inscription_id,
-                    tags_file_name=tags_file_name,
-                )
+                caption = tags_dict[inscription_id].get("raw", "")
             elif caption_option == "InscriptionId":
                 caption = inscription_id
             else:
