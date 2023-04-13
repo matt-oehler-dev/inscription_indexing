@@ -7,12 +7,12 @@ import base64
 from io import BytesIO
 
 
-USE_SAMPLED_SET_OF_IMAGES = True
+USE_SAMPLED_SET_OF_IMAGES = False
 
 if USE_SAMPLED_SET_OF_IMAGES:
     TAG_DIR: str = "tag_files_500"
 else:
-    TAG_DIR: str = "tag_files"  #
+    TAG_DIR: str = "tag_files"
 
 
 @st.cache_data
@@ -64,12 +64,14 @@ def app():
 
     images_to_show = []
     if selected_tags:
-        for inscription_id in image_filenames:
-            image_tags = get_image_tags(inscription_id, tags_file_name=tags_file_name)
-            if set(selected_tags).issubset(set(image_tags)):
-                images_to_show.append(inscription_id)
-    # else:sow = []
-
+        with st.spinner("Wait for it..."):
+            for inscription_id in image_filenames:
+                image_tags = get_image_tags(
+                    inscription_id, tags_file_name=tags_file_name
+                )
+                if set(selected_tags).issubset(set(image_tags)):
+                    images_to_show.append(inscription_id)
+        st.success("Done!")
     if not selected_tags:
         st.write("Please select one or more tags to display images.")
     elif not images_to_show:
