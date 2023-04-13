@@ -7,7 +7,7 @@ import base64
 from io import BytesIO
 
 
-USE_SAMPLED_SET_OF_IMAGES = False
+USE_SAMPLED_SET_OF_IMAGES = True
 
 if USE_SAMPLED_SET_OF_IMAGES:
     TAG_DIR: str = "tag_files_500"
@@ -45,7 +45,7 @@ def app():
 
     tag_files = [x[:-5] for x in sorted(os.listdir(TAG_DIR))]
     tags_file_name: str = (
-        st.sidebar.selectbox("Select Caption Source", tag_files, index=4) + ".json"
+        st.sidebar.selectbox("Select Caption Source", tag_files, index=5) + ".json"
     )
 
     # get tags and image files
@@ -64,14 +64,20 @@ def app():
 
     images_to_show = []
     if selected_tags:
-        with st.spinner("Wait for it..."):
-            for inscription_id in image_filenames:
-                image_tags = get_image_tags(
-                    inscription_id, tags_file_name=tags_file_name
-                )
-                if set(selected_tags).issubset(set(image_tags)):
-                    images_to_show.append(inscription_id)
-        st.success("Done!")
+        one_hundredth = (len(tags_dict) // 100) + 1
+        percent_searched = 0
+        bar = st.progress(percent_searched)
+        for i, inscription_id in enumerate(image_filenames):
+            if i % one_hundredth == 0:
+                percent_searched += 1
+                # print(i, percent_searched, i % percent_searched)
+                bar.progress(percent_searched)
+            image_tags = get_image_tags(inscription_id, tags_file_name=tags_file_name)
+            if set(selected_tags).issubset(set(image_tags)):
+                images_to_show.append(inscription_id)
+        bar.progress(100)
+        bar.empty()
+
     if not selected_tags:
         st.write("Please select one or more tags to display images.")
     elif not images_to_show:
