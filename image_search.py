@@ -69,7 +69,7 @@ def app():
         st.write("No images found with the selected tags.")
     else:
         st.write(
-            f"There are: {len(images_to_show)} images out of {len(tags_dict)} with the selected tag(s)"
+            f"There are {len(images_to_show)} images out of {len(tags_dict)} with the selected tag(s)"
         )
         page_number = st.sidebar.number_input(
             "Page number", min_value=1, max_value=len(images_to_show) // 16 + 1, value=1
